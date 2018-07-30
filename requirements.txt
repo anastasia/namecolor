@@ -1,0 +1,3 @@
+python-colourlovers
+colormath
+tqdm
