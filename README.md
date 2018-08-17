@@ -1,10 +1,12 @@
 # name-color
 
-Transform a name or description in to a color
+Transform a name or description into a color representation
 
 This is the code used in [this article](https://pabloloyola.github.io/2018/04/01/color-language.html) where 
 the paper [Character Sequence Models for Colorful Words](https://aclweb.org/anthology/D16-1202)
 is replicated.
+
+An accompanying blog post describing this task can be found here: https://pabloloyola.github.io/2018/04/01/color-language.html
 
 This code was tested on Pytorch 0.3.1
 
