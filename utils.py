@@ -1,7 +1,9 @@
 import torch
 import random
 from torch.autograd import Variable
-
+from colormath.color_conversions import convert_color
+from colormath.color_objects import LabColor, sRGBColor
+from skimage import color
 random.seed(42)
 
 UNK = '<UNK>'
@@ -238,3 +240,43 @@ def pad_list(raw_input_list, dim0_pad=None, dim1_pad=None, align_right=False, pa
 
     out = out.t()
     return out, lengths
+
+
+def rgb2lab(r, g, b):
+    newcolor = list(convert_color(
+        sRGBColor(r / 255, g / 255, b / 255), LabColor).get_value_tuple())
+    str_newcolor = [str(c) for c in newcolor]
+    return str_newcolor
+
+
+def lab2rgb(l, a, b):
+    if type(l) == str:
+        l, a, b = float(l), float(a), float(b)
+    numpy_color = color.lab2rgb([[[l, a, b]]]) * 255
+    str_newcolor = [str(c) for c in list(numpy_color.squeeze())]
+    return str_newcolor
+
+
+def rgb2hex(r, g, b):
+    if type(r) == str:
+        r, g, b = float(r), float(g), float(b)
+    if type(r) == float:
+        r, g, b = round(r), round(g), round(b)
+    return '#%02x%02x%02x' % (r, g, b)
+
+
+def hex2rgb(hex):
+    if hex[0] == "#":
+        hex = hex.split("#")[1]
+    red, green, blue = bytes.fromhex(hex)
+    return red, green, blue
+
+
+def hex2lab(hex):
+    r, g, b = hex2rgb(hex)
+    return rgb2lab(r, g, b)
+
+
+def lab2hex(l, a, b):
+    r, g, b = lab2rgb(l, a, b)
+    return rgb2hex(r, g, b)
