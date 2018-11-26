@@ -16,16 +16,25 @@ def rgb2lab(r, g, b):
 
 def get_data():
     cl = ColourLovers()
-    data = [] 
-    for i in range(1, 1000000,100):
-        time.sleep(1)
-        col = cl.colors(num_results=100, result_offset=i)
-        data+=[ [c.title] + rgb2lab(c.rgb.red, c.rgb.blue,c.rgb.green) for c in col]
-    
-    print("Saving...")
-    with open("/home/pablo/data/colors/corpus.data", "w") as f:
-        for color in data:
-            f.write(",".join(color)+"\n")
+    with open("corpus_new_fixed.data", "a+") as f:
+        for i in range(1, 1000000, 100):
+            time.sleep(0.5)
+            col = cl.colors(num_results=100, result_offset=i)
+            for c in col:
+                try:
+                    color = [c.title] + rgb2lab(c.rgb.red, c.rgb.green, c.rgb.blue)
+                    f.write(",".join(color) + "\n")
+                    print(c.title)
+                except Exception:
+                    try:
+                        title = c.title.encode('ascii', 'ignore').decode('ascii')
+                        color = [title] + rgb2lab(c.rgb.red, c.rgb.green, c.rgb.blue)
+                        f.write(",".join(color) + "\n")
+                    except Exception as err:
+                        errored_color = c
+                        print("got error after decoding attempt:", errored_color, err)
+                        pass
+
 
 if __name__ == "__main__":
     get_data()
