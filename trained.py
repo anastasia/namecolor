@@ -1,3 +1,5 @@
+import os
+import pickle
 import torch
 import torch.nn as nn
 from collections import namedtuple
@@ -5,7 +7,6 @@ from data import read_data
 from utils import Vocab, BatchIterator, lab2hex
 from model import BiLSTM
 import fileinput
-
 cuda = False
 
 if cuda:
@@ -31,8 +32,16 @@ embedding_size = 300
 
 print("Reading the data")
 Name = namedtuple('Name', ['index', 'name', 'color'])
-train_names = read_data(train_path)
-vocab = Vocab(train_names, min_count=min_count, add_padding=True)
+pickled_vocab_path = "vocab.pickle"
+if not os.path.exists(pickled_vocab_path):
+    train_names = read_data(train_path)
+    vocab = Vocab(train_names, min_count=min_count, add_padding=True)
+    with open(pickled_vocab_path, "wb") as f:
+        pickle.dump(vocab, f)
+else:
+    with open(pickled_vocab_path, "rb") as f:
+        vocab = pickle.load(f)
+
 embeddings = nn.Embedding(len(vocab.index2token),
                            embedding_size,
                            padding_idx=vocab.PAD.hash)
@@ -45,6 +54,8 @@ model = BiLSTM(embeddings=embeddings,
                bidirectional=bidirectional,
                num_layers=num_layers,
                pooling=pooling)
+
+
 if cuda:
     weights = 'model_fitted.pt'
     model.cuda()
