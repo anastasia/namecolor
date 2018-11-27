@@ -7,6 +7,7 @@ from data import read_data
 from utils import Vocab, BatchIterator, lab2hex
 from model import BiLSTM
 import fileinput
+
 cuda = False
 
 if cuda:
@@ -30,49 +31,47 @@ lr = 0.0001
 gradient_clipping = 0.25
 embedding_size = 300
 
-print("Reading the data")
 Name = namedtuple('Name', ['index', 'name', 'color'])
 pickled_vocab_path = "vocab.pickle"
-if not os.path.exists(pickled_vocab_path):
-    train_names = read_data(train_path)
-    vocab = Vocab(train_names, min_count=min_count, add_padding=True)
-    with open(pickled_vocab_path, "wb") as f:
-        pickle.dump(vocab, f)
-else:
-    with open(pickled_vocab_path, "rb") as f:
-        vocab = pickle.load(f)
-
-embeddings = nn.Embedding(len(vocab.index2token),
-                           embedding_size,
-                           padding_idx=vocab.PAD.hash)
-
-model = BiLSTM(embeddings=embeddings,
-               hidden_size=hidden_size,
-               num_labels=num_labels,
-               input_dropout=input_dropout,
-               output_dropout=output_dropout,
-               bidirectional=bidirectional,
-               num_layers=num_layers,
-               pooling=pooling)
 
 
-if cuda:
-    weights = 'model_fitted.pt'
-    model.cuda()
-else:
-    weights = 'model_fitted_cpu.pt'
+def get_color(line):
+    if not os.path.exists(pickled_vocab_path):
+        train_names = read_data(train_path)
+        vocab = Vocab(train_names, min_count=min_count, add_padding=True)
+        with open(pickled_vocab_path, "wb") as f:
+            pickle.dump(vocab, f)
+    else:
+        with open(pickled_vocab_path, "rb") as f:
+            vocab = pickle.load(f)
 
-model.load_state_dict(torch.load(weights))
+    embeddings = nn.Embedding(len(vocab.index2token),
+                              embedding_size,
+                              padding_idx=vocab.PAD.hash)
 
-print(model)
+    model = BiLSTM(embeddings=embeddings,
+                   hidden_size=hidden_size,
+                   num_labels=num_labels,
+                   input_dropout=input_dropout,
+                   output_dropout=output_dropout,
+                   bidirectional=bidirectional,
+                   num_layers=num_layers,
+                   pooling=pooling)
 
+    if cuda:
+        weights = 'model_fitted.pt'
+        model.cuda()
+    else:
+        weights = 'model_fitted_cpu.pt'
 
-def format_data(line):
-    return [Name(index=0, name=line, color=(0., 0., 0.))]
+    model.load_state_dict(torch.load(weights))
 
+    print(model)
 
-print('give me your color:')
-for line in fileinput.input():
+    def format_data(line):
+        return [Name(index=0, name=line, color=(0., 0., 0.))]
+
+    print('give me your color:')
     train_batches = BatchIterator(
         format_data(line),
         vocab, batch_size, cuda=cuda)
@@ -83,7 +82,5 @@ for line in fileinput.input():
         break
 
     onecolor = (logits.cpu() if cuda else logits).squeeze().detach().numpy()
-    print("getting logits", onecolor)
     l, a, b = onecolor
-    print(lab2hex(l, a, b))
-    print('give me your color:')
+    return lab2hex(l, a, b)
