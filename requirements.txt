@@ -1,3 +1,10 @@
 python-colourlovers
 colormath
 tqdm
+scikit-image
+
+torch
+ipdb
+ipython
+
+flask
