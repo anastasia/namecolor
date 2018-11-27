@@ -1,18 +1,11 @@
 import time
 from colourlovers import ColourLovers
-from colormath.color_objects import LabColor, sRGBColor
-from colormath.color_conversions import convert_color
+
+from utils import rgb2lab
 
 
 # check http://www.colourlovers.com/api
 # https://github.com/elbaschid/python-colourlovers
-
-def rgb2lab(r, g, b):
-    newcolor = list(convert_color(
-        sRGBColor(r / 255, g / 255, b / 255), LabColor).get_value_tuple())
-    str_newcolor = [str(c) for c in newcolor]
-    return str_newcolor
-
 
 def get_data():
     cl = ColourLovers()
@@ -24,7 +17,6 @@ def get_data():
                 try:
                     color = [c.title] + rgb2lab(c.rgb.red, c.rgb.green, c.rgb.blue)
                     f.write(",".join(color) + "\n")
-                    print(c.title)
                 except Exception:
                     try:
                         title = c.title.encode('ascii', 'ignore').decode('ascii')
