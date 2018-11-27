@@ -15,7 +15,7 @@ def home():
         if not color_string:
             return render_template("main.html")
 
-        hex_color = get_color(color_string)
+        hex_color = get_color(color_string)['hex']
         return render_template("main.html", color=hex_color)
 
 
@@ -23,10 +23,15 @@ def home():
 def color():
     color_string = request.args.get("name", None)
     if not color_string:
-        return jsonify({"color": "", "status": 204, "value": color_string})
+        return jsonify({"color": None, "status": 204, "value": color_string})
 
-    hex_color = get_color(color_string)
-    return jsonify({"color": hex_color, "status": 200, "value": color_string})
+    color_obj = get_color(color_string)
+    print("getting color_obj", color_obj)
+    return jsonify({"hex": color_obj['hex'],
+                    "rgb": color_obj['rgb'],
+                    "lab": color_obj['lab'],
+                    "status": 200,
+                    "value": color_string})
 
 
 if __name__ == '__main__':

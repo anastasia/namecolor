@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 from collections import namedtuple
 from data import read_data
-from utils import Vocab, BatchIterator, lab2hex
+from utils import Vocab, BatchIterator, lab2hex, lab2rgb
 from model import BiLSTM
 import fileinput
 
@@ -83,4 +83,9 @@ def get_color(line):
 
     onecolor = (logits.cpu() if cuda else logits).squeeze().detach().numpy()
     l, a, b = onecolor
-    return lab2hex(l, a, b)
+    color_obj = {
+        "hex": lab2hex(l, a, b),
+        "rgb": lab2rgb(l, a, b),
+        "lab": [str(l), str(a), str(b)]
+    }
+    return color_obj
