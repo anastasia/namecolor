@@ -6,6 +6,5 @@ scikit-image
 torch
 ipdb
 ipython
-pickle
 
 flask
