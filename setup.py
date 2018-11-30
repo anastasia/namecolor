@@ -24,6 +24,6 @@ setup(
     py_modules=["namecolor"],
     url="",
     long_description=read("README"),
-    cmdclass={'install': InstallRequirements}
+    install_requires=["torch", "colormath", "python-colourlovers", "scikit-image", "flask"]
 )
 
