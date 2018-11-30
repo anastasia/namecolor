@@ -2,7 +2,6 @@ import numpy as np
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
-import ipdb
 
 
 def mean_pooling(batch_hidden_states, batch_lengths):
@@ -36,8 +35,6 @@ def pack_rnn_input(embedded_sequence_batch, sequence_lengths):
     if embedded_sequence_batch.is_cuda:
         idx_sort = idx_sort.cuda()
         idx_unsort = idx_unsort.cuda()
-
-    # ipdb.set_trace()
 
     embedded_sequence_batch = embedded_sequence_batch.index_select(0, idx_sort)
     int_sequence_lengths = [int(elem) for elem in sorted_sequence_lengths.tolist()]
@@ -117,7 +114,6 @@ class BiLSTM(nn.Module):
 
         embedded_sequence_batch = embedded_sequence_batch.transpose(0, 1)
 
-        # ipdb.set_trace()
         packed_rnn_input, indices = pack_rnn_input(embedded_sequence_batch,
                                                    sequence_lengths)
 
