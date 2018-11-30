@@ -26,3 +26,4 @@ setup(
     long_description=read("README"),
     cmdclass={'install': InstallRequirements}
 )
+
