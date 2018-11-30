@@ -1,5 +1,13 @@
 import os
-from distutils.core import setup
+from setuptools import setup
+from setuptools.command.install import install
+from subprocess import call
+
+
+class InstallRequirements(install):
+    def run(self):
+        install.run(self)
+        call(['pip', 'install', '-r', 'requirements.txt'])
 
 
 def read(fname):
@@ -16,4 +24,5 @@ setup(
     py_modules=["namecolor"],
     url="",
     long_description=read("README"),
+    cmdclass={'install': InstallRequirements}
 )
