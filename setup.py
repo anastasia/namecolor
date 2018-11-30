@@ -1,13 +1,5 @@
 import os
 from setuptools import setup
-from setuptools.command.install import install
-from subprocess import call
-
-
-class InstallRequirements(install):
-    def run(self):
-        install.run(self)
-        call(['pip', 'install', '-r', 'requirements.txt'])
 
 
 def read(fname):
@@ -26,4 +18,3 @@ setup(
     long_description=read("README"),
     install_requires=["torch", "colormath", "python-colourlovers", "scikit-image"]
 )
-
