@@ -15,7 +15,7 @@ from color.model import BiLSTM
 def train_model():
     torch.backends.cudnn.benchmark = True
 
-    train_path = os.path.join(settings.DATA_DIR, 'corpus.data')
+    train_path = os.path.join(settings.DATA_DIR, 'corpus.data.gzip')
     valid_path = os.path.join(settings.DATA_DIR, 'valid.data')
 
     epochs = 20

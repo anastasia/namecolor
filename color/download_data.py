@@ -1,10 +1,11 @@
 import os
+import gzip
 import time
 from colourlovers import ColourLovers
 from collections import namedtuple
 
 from color import settings
-from color.utils import rgb2lab
+from color.utils import rgb2lab, zip_data
 
 
 # check http://www.colourlovers.com/api
@@ -30,6 +31,9 @@ def get_data():
                         errored_color = c
                         print("got error after decoding attempt:", errored_color, err)
                         pass
+    newpath = zip_data(corpus_data)
+    if newpath:
+        os.remove(corpus_data)
 
 
 def read_data(dataset_path):
@@ -37,20 +41,23 @@ def read_data(dataset_path):
     names = []
     colors = []
     Name = namedtuple('Name', ['index', 'name', 'color'])
+    if ".gzip" in dataset_path:
+        f = gzip.open(dataset_path, 'rb')
+    else:
+        f = open(dataset_path, 'r')
 
-    with open(dataset_path, 'r') as f:
-        for idx, line in enumerate(f.readlines()):
-            values = line.strip().split(",")
-            # since the names in the colourlovers db sometimes have commas
-            # we pop the LAB values, and anything that's left over is the name
-            b_val = values.pop()
-            a_val = values.pop()
-            l_val = values.pop()
-            name = ",".join(values)
-            if len(name) > 0:
-                indices.append(idx)
-                names.append(name)
-                colors.append((float(l_val), float(a_val), float(b_val)))
+    for idx, line in enumerate(f.readlines()):
+        values = line.strip().split(",")
+        # since the names in the colourlovers db sometimes have commas
+        # we pop the LAB values, and anything that's left over is the name
+        b_val = values.pop()
+        a_val = values.pop()
+        l_val = values.pop()
+        name = ",".join(values)
+        if len(name) > 0:
+            indices.append(idx)
+            names.append(name)
+            colors.append((float(l_val), float(a_val), float(b_val)))
 
     names_ = [Name(index, name, color)
               for index, name, color in zip(indices, names, colors)]

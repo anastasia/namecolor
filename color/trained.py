@@ -6,7 +6,7 @@ import torch.nn as nn
 from collections import namedtuple
 
 import sys
-sys.path.append("/Users/aaizman/Documents/namecolor/color")
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from color import settings
 from color.download_data import read_data
@@ -19,7 +19,7 @@ cuda = False
 if cuda:
     torch.backends.cudnn.benchmark = True
 
-train_path = os.path.join(settings.DATA_DIR, 'corpus.data')
+train_path = os.path.join(settings.DATA_DIR, 'corpus.data.gzip')
 
 epochs = 20
 batch_size = 1

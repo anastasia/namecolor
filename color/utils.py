@@ -1,4 +1,5 @@
 import torch
+import gzip
 import random
 from torch.autograd import Variable
 from colormath.color_conversions import convert_color
@@ -281,3 +282,14 @@ def hex2lab(hex):
 def lab2hex(l, a, b):
     r, g, b = lab2rgb(l, a, b)
     return rgb2hex(r, g, b)
+
+
+def zip_data(filepath):
+    with open(filepath, "rb") as f:
+        compressed = gzip.compress(f.read())
+
+    newfilepath = filepath + ".gzip"
+
+    with open(newfilepath, "wb+") as f:
+        f.write(compressed)
+    return newfilepath
